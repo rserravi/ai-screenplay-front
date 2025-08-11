@@ -1,6 +1,6 @@
 // src/pages/ScreenplayPage.tsx
 import { useEffect, useMemo } from "react";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 
 import { ScreenplayTabs } from "../components/ScreenplayTabs";
 import { RightSidebar } from "../components/RightSidebar/RightSidebar";
@@ -17,16 +17,14 @@ import S9ReviewView from "../states/S9ReviewView";
 import S10ExportsView from "../states/S10ExportsView";
 
 
-import { useAppViewModel } from "../vm/useAppViewModel";
+import type { AppViewModel } from "../vm/useAppViewModel";
 import { useStateMachine } from "../vm/useStateMachine";
 import type { StateId } from "../models/enums";
 
 const SIDEBAR_WIDTH = 360; // ancho fijo y consistente
 const APPBAR_OFFSET = 88;  // pegajoso (ajusta si tu AppBar cambia)
 
-export default function ScreenplayPage() {
-  const vm = useAppViewModel();
-
+export default function ScreenplayPage({ vm }: { vm: AppViewModel }) {
   const sm = useStateMachine({
     screenplay: vm.screenplay,
     currentState: vm.currentState,
@@ -82,13 +80,7 @@ export default function ScreenplayPage() {
       >
         {/* Columna izquierda (contenido principal) */}
         <Box sx={{ minWidth: 0 /* evita overflow por contenido amplio */ }}>
-          {vm.loading && !vm.screenplay ? (
-            <Box sx={{ display: "grid", placeItems: "center", minHeight: 280 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            Editor
-          )}
+          {vm.loading && !vm.screenplay ? null : Editor}
         </Box>
 
         {/* Sidebar derecha fija */}
