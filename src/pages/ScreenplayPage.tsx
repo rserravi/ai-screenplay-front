@@ -1,6 +1,7 @@
 // src/pages/ScreenplayPage.tsx
 import { useEffect, useMemo } from "react";
 import { Box, CircularProgress } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 import { ScreenplayTabs } from "../components/ScreenplayTabs";
 import { RightSidebar } from "../components/RightSidebar/RightSidebar";
@@ -16,46 +17,60 @@ import S8FormattedDraftView from "../states/S8FormattedDraftView";
 import S9ReviewView from "../states/S9ReviewView";
 import S10ExportsView from "../states/S10ExportsView";
 
-
 import { useAppViewModel } from "../vm/useAppViewModel";
 import { useStateMachine } from "../vm/useStateMachine";
 import type { StateId } from "../models/enums";
 
 const SIDEBAR_WIDTH = 360; // ancho fijo y consistente
-const APPBAR_OFFSET = 88;  // pegajoso (ajusta si tu AppBar cambia)
+const APPBAR_OFFSET = 88; // pegajoso (ajusta si tu AppBar cambia)
 
 export default function ScreenplayPage() {
   const vm = useAppViewModel();
+  const { id } = useParams<{ id: string }>();
 
   const sm = useStateMachine({
     screenplay: vm.screenplay,
     currentState: vm.currentState,
-    setCurrentState: vm.setCurrentState
+    setCurrentState: vm.setCurrentState,
   });
 
   useEffect(() => {
-    vm.loadScreenplay(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (id) {
+      vm.loadScreenplay(Number(id));
+    }
+  }, [id, vm]);
 
   const Editor = useMemo(() => {
     switch (vm.currentState as StateId) {
-      case "S1_SYNOPSIS":       return <S1SynopsisView vm={vm} sm={sm} />;
-      case "S2_TREATMENT":      return <S2TreatmentView vm={vm} sm={sm} />;
-      case "S3_TURNING_POINTS": return <S3TurningPointsView vm={vm} sm={sm} />;
-      case "S4_CHARACTERS":     return <S4CharactersView vm={vm} sm={sm} />;
-      case "S5_SUBPLOTS":       return <S5SubplotsView vm={vm} sm={sm} />;
-      case "S6_KEY_SCENES":     return <S6KeyScenesView vm={vm} sm={sm} />;
-      case "S7_ALL_SCENES":     return <S7AllScenesView vm={vm} sm={sm} />;
-      case "S8_FORMATTED_DRAFT":return <S8FormattedDraftView vm={vm} sm={sm} />;
-      case "S9_REVIEW":         return <S9ReviewView vm={vm} sm={sm} />;
-      case "S10_EXPORTS":       return <S10ExportsView vm={vm} sm={sm} />;
-      default:                  return <S1SynopsisView vm={vm} sm={sm} />;
+      case "S1_SYNOPSIS":
+        return <S1SynopsisView vm={vm} sm={sm} />;
+      case "S2_TREATMENT":
+        return <S2TreatmentView vm={vm} sm={sm} />;
+      case "S3_TURNING_POINTS":
+        return <S3TurningPointsView vm={vm} sm={sm} />;
+      case "S4_CHARACTERS":
+        return <S4CharactersView vm={vm} sm={sm} />;
+      case "S5_SUBPLOTS":
+        return <S5SubplotsView vm={vm} sm={sm} />;
+      case "S6_KEY_SCENES":
+        return <S6KeyScenesView vm={vm} sm={sm} />;
+      case "S7_ALL_SCENES":
+        return <S7AllScenesView vm={vm} sm={sm} />;
+      case "S8_FORMATTED_DRAFT":
+        return <S8FormattedDraftView vm={vm} sm={sm} />;
+      case "S9_REVIEW":
+        return <S9ReviewView vm={vm} sm={sm} />;
+      case "S10_EXPORTS":
+        return <S10ExportsView vm={vm} sm={sm} />;
+      default:
+        return <S1SynopsisView vm={vm} sm={sm} />;
     }
   }, [vm.currentState, vm, sm]);
 
   // Evita warning de Tabs cuando aún no hay screenplay
-  const currentForTabs = (vm.screenplay ? vm.currentState : "S1_SYNOPSIS") as StateId;
+  const currentForTabs = (
+    vm.screenplay ? vm.currentState : "S1_SYNOPSIS"
+  ) as StateId;
 
   return (
     <Box>
@@ -73,7 +88,7 @@ export default function ScreenplayPage() {
           mt: 2,
           display: "grid",
           gridTemplateColumns: {
-            xs: "1fr",                                // móvil: sidebar abajo
+            xs: "1fr", // móvil: sidebar abajo
             md: `minmax(0, 1fr) ${SIDEBAR_WIDTH}px`, // desktop: 2 columnas
           },
           alignItems: "start",
