@@ -1,5 +1,7 @@
 // src/utils/fountainParser.ts
-import fountain from "fountain-js";
+import { Fountain } from "fountain-js";
+
+const fountain = new Fountain();
 
 export type ParaType =
   | "Scene Heading"
