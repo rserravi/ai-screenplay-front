@@ -1,21 +1,12 @@
 // src/states/S1SynopsisView.tsx
 import { useState } from "react";
-import {
-  Box,
-  Stack,
-  TextField,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Typography,
-} from "@mui/material";
-import { useNotify } from "./useNotify";
+import { Box, Stack, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from "@mui/material";
+import WorkflowActions from "../components/WorkflowActions";
+
 import type { useAppViewModel } from "../vm/useAppViewModel";
 import type { useStateMachine } from "../vm/useStateMachine";
 import { proposeSynopsis } from "../services/aiJobsService";
-
+import { useNotify } from "./useNotify";
 type VM = ReturnType<typeof useAppViewModel>;
 type SM = ReturnType<typeof useStateMachine>;
 
@@ -120,20 +111,13 @@ export default function S1SynopsisView({ vm, sm }: { vm: VM; sm: SM }) {
           minRows={6}
         />
 
-        <Stack direction="row" spacing={1}>
-          <Button variant="outlined" onClick={onPropose}>
-            Propose with AI
-          </Button>
-          <Button
-            variant="contained"
-            onClick={onSave}
-            disabled={!vm.dirtyByState["S1_SYNOPSIS"]}
-          >
-            Save
-          </Button>
-          <Button color="secondary" onClick={onApprove}>
-            Approve & Continue (→ S2)
-          </Button>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Button variant="outlined" onClick={onPropose}>Propose with AI</Button>
+          <WorkflowActions
+            onSave={onSave}
+            onApprove={onApprove}
+            saveDisabled={!vm.dirtyByState["S1_SYNOPSIS"]}
+          />
         </Stack>
       </Stack>
 
