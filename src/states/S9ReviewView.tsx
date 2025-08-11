@@ -1,9 +1,24 @@
 // src/states/S9ReviewView.tsx
 import { useMemo, useState, useCallback } from "react";
 import {
-  Box, Stack, Typography, Paper, Button, Chip, IconButton, Divider, Dialog, DialogTitle, DialogContent, DialogActions,
-  Grid, TextField, Alert, AlertTitle
+  Box,
+  Stack,
+  Typography,
+  Paper,
+  Button,
+  Chip,
+  IconButton,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Grid,
+  TextField,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
+import { useNotify } from "./useNotify";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
@@ -16,13 +31,21 @@ import type { Scene } from "../models/scenes";
 import type { Character } from "../models/characters";
 import type { Subplot } from "../models/subplots";
 
-import { updateScene, updateCharacter, updateSubplot } from "../services/screenplayService";
-import { makeSlugline, compileFountain, downloadFountain } from "../utils/fountain";
+import {
+  updateScene,
+  updateCharacter,
+  updateSubplot,
+} from "../services/screenplayService";
+import {
+  makeSlugline,
+  compileFountain,
+  downloadFountain,
+} from "../utils/fountain";
 
 // Reusos (asegúrate de exportarlos como 'export function ...' en sus archivos)
-import { CharacterCard } from "../states/S4CharactersView";    // <-- exportado
-import { SceneEditor } from "../states/S8FormattedDraftView";  // <-- exportado
-import { SubplotCard } from "../states/S5SubplotsView";        // <-- exportado
+import { CharacterCard } from "../states/S4CharactersView"; // <-- exportado
+import { SceneEditor } from "../states/S8FormattedDraftView"; // <-- exportado
+import { SubplotCard } from "../states/S5SubplotsView"; // <-- exportado
 
 type VM = ReturnType<typeof useAppViewModel>;
 type SM = ReturnType<typeof useStateMachine>;
@@ -30,13 +53,20 @@ type SM = ReturnType<typeof useStateMachine>;
 export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
   const sp = vm.screenplay;
   if (!sp) return <Typography variant="body2">Loading screenplay…</Typography>;
+  const notify = useNotify();
 
   const scenes = useMemo(
     () => (sp.scenes ?? []).slice().sort((a, b) => a.order - b.order),
-    [sp.scenes]
+    [sp.scenes],
   );
-  const characterNames = useMemo(() => (sp.characters ?? []).map(c => c.name).filter(Boolean), [sp.characters]);
-  const subplotTitles = useMemo(() => (sp.subplots ?? []).map(s => s.title).filter(Boolean), [sp.subplots]);
+  const characterNames = useMemo(
+    () => (sp.characters ?? []).map((c) => c.name).filter(Boolean),
+    [sp.characters],
+  );
+  const subplotTitles = useMemo(
+    () => (sp.subplots ?? []).map((s) => s.title).filter(Boolean),
+    [sp.subplots],
+  );
 
   // Modals
   const [openCharacterId, setOpenCharacterId] = useState<number | null>(null);
@@ -56,10 +86,13 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
     setDraftBuffer("");
   };
   const saveEdit = async (sc: Scene) => {
-    const saved = await updateScene(sp.id, { ...sc, formatted_text: draftBuffer });
+    const saved = await updateScene(sp.id, {
+      ...sc,
+      formatted_text: draftBuffer,
+    });
     vm.setScreenplay({
       ...sp,
-      scenes: (sp.scenes ?? []).map(x => (x.id === sc.id ? saved : x)),
+      scenes: (sp.scenes ?? []).map((x) => (x.id === sc.id ? saved : x)),
     });
     vm.markDirty("S9_REVIEW" as any, true);
     setEditingSceneId(null);
@@ -76,18 +109,30 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
 
   const approve = async () => {
     // Aquí podrías añadir guard S9→S10 si defines un siguiente estado
-    alert("S9 Review listo. (Puedes definir un guard y estado S10 para cierre/export final)");
+    notify(
+      "S9 Review listo. (Puedes definir un guard y estado S10 para cierre/export final)",
+    );
   };
 
-  const onClickName = useCallback((name: string) => {
-    const c = (sp.characters ?? []).find(x => x.name.toLowerCase() === name.toLowerCase());
-    if (c) setOpenCharacterId(c.id);
-  }, [sp.characters]);
+  const onClickName = useCallback(
+    (name: string) => {
+      const c = (sp.characters ?? []).find(
+        (x) => x.name.toLowerCase() === name.toLowerCase(),
+      );
+      if (c) setOpenCharacterId(c.id);
+    },
+    [sp.characters],
+  );
 
-  const onClickSubplot = useCallback((title: string) => {
-    const s = (sp.subplots ?? []).find(x => x.title.toLowerCase() === title.toLowerCase());
-    if (s) setOpenSubplotId(s.id);
-  }, [sp.subplots]);
+  const onClickSubplot = useCallback(
+    (title: string) => {
+      const s = (sp.subplots ?? []).find(
+        (x) => x.title.toLowerCase() === title.toLowerCase(),
+      );
+      if (s) setOpenSubplotId(s.id);
+    },
+    [sp.subplots],
+  );
 
   const openSceneMeta = (sceneId: number) => setOpenSceneId(sceneId);
 
@@ -95,26 +140,54 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
     if (!tpOrder) return;
     try {
       sessionStorage.setItem("ui.focus.tp", String(tpOrder));
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
     vm.setCurrentState("S6_KEY_SCENES" as any);
   };
 
   // ── Validador liviano ─────────────────────────────────────────
   const issues = useMemo(() => {
-    const arr: { kind: string; label: string; sceneId?: number; tp?: number }[] = [];
+    const arr: {
+      kind: string;
+      label: string;
+      sceneId?: number;
+      tp?: number;
+    }[] = [];
     const contiguous = scenes.every((s, i) => s.order === i + 1);
-    if (!contiguous) arr.push({ kind: "NUMBERING", label: "Scene numbering is not contiguous" });
+    if (!contiguous)
+      arr.push({
+        kind: "NUMBERING",
+        label: "Scene numbering is not contiguous",
+      });
 
     for (const s of scenes) {
       const metaBad =
-        !s.heading || !s.time_of_day || !s.location || (s.location?.trim().length ?? 0) < 3;
-      if (metaBad) arr.push({ kind: "META", label: `Missing meta in scene #${s.order}`, sceneId: s.id });
+        !s.heading ||
+        !s.time_of_day ||
+        !s.location ||
+        (s.location?.trim().length ?? 0) < 3;
+      if (metaBad)
+        arr.push({
+          kind: "META",
+          label: `Missing meta in scene #${s.order}`,
+          sceneId: s.id,
+        });
 
       if ((s.synopsis?.trim().length ?? 0) < 30) {
-        arr.push({ kind: "SYNOPSIS", label: `Short synopsis in scene #${s.order}`, sceneId: s.id });
+        arr.push({
+          kind: "SYNOPSIS",
+          label: `Short synopsis in scene #${s.order}`,
+          sceneId: s.id,
+        });
       }
       if (s.is_key && (s.formatted_text?.trim().length ?? 0) < 60) {
-        arr.push({ kind: "KEY_DRAFT", label: `Key scene #${s.order} draft is thin`, sceneId: s.id, tp: s.linked_turning_point ?? undefined });
+        arr.push({
+          kind: "KEY_DRAFT",
+          label: `Key scene #${s.order} draft is thin`,
+          sceneId: s.id,
+          tp: s.linked_turning_point ?? undefined,
+        });
       }
     }
     return arr;
@@ -124,8 +197,10 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
     <Box>
       <Stack spacing={2}>
         <Typography variant="body2" color="text.secondary">
-          Full screenplay view. Click a <strong>scene header</strong> to edit its metadata; click a <strong>character name</strong> or <strong>subplot title</strong> to open its card.
-          You can edit scene text inline; all changes sync with earlier steps.
+          Full screenplay view. Click a <strong>scene header</strong> to edit
+          its metadata; click a <strong>character name</strong> or{" "}
+          <strong>subplot title</strong> to open its card. You can edit scene
+          text inline; all changes sync with earlier steps.
         </Typography>
 
         {/* Validador */}
@@ -154,17 +229,36 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
         )}
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <Button variant="outlined" onClick={compileAndDownload}>Download (.fountain)</Button>
-          <Button variant="contained" startIcon={<SaveIcon />} onClick={saveAll} disabled={!vm.dirtyByState["S9_REVIEW" as any]}>Save</Button>
-          <Button color="secondary" startIcon={<InfoIcon />} onClick={approve}>Finish Review</Button>
+          <Button variant="outlined" onClick={compileAndDownload}>
+            Download (.fountain)
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<SaveIcon />}
+            onClick={saveAll}
+            disabled={!vm.dirtyByState["S9_REVIEW" as any]}
+          >
+            Save
+          </Button>
+          <Button color="secondary" startIcon={<InfoIcon />} onClick={approve}>
+            Finish Review
+          </Button>
           <Chip size="small" label={`Scenes: ${scenes.length}`} />
         </Stack>
 
         {/* Documento completo */}
         <Paper variant="outlined">
-          <Stack direction="row" alignItems="center" justifyContent="space-between" px={2} py={1}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            px={2}
+            py={1}
+          >
             <Typography variant="subtitle1">Document</Typography>
-            <Typography variant="caption" color="text.secondary">Read & edit — synced with S6/S7/S8</Typography>
+            <Typography variant="caption" color="text.secondary">
+              Read & edit — synced with S6/S7/S8
+            </Typography>
           </Stack>
           <Divider />
 
@@ -181,7 +275,9 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
                   onClickSubplot={onClickSubplot}
                   onJumpToTP={() => jumpToTP(sc.linked_turning_point)}
                   isEditing={editingSceneId === sc.id}
-                  draftBuffer={editingSceneId === sc.id ? draftBuffer : undefined}
+                  draftBuffer={
+                    editingSceneId === sc.id ? draftBuffer : undefined
+                  }
                   onChangeDraft={(v) => setDraftBuffer(v)}
                   onStartEdit={() => startEdit(sc)}
                   onCancelEdit={cancelEdit}
@@ -189,7 +285,9 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
                 />
               ))}
               {scenes.length === 0 && (
-                <Typography variant="body2" color="text.secondary">No scenes to show.</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  No scenes to show.
+                </Typography>
               )}
             </Stack>
           </Box>
@@ -197,7 +295,12 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
       </Stack>
 
       {/* Character modal */}
-      <Dialog open={openCharacterId != null} onClose={() => setOpenCharacterId(null)} maxWidth="md" fullWidth>
+      <Dialog
+        open={openCharacterId != null}
+        onClose={() => setOpenCharacterId(null)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Character</DialogTitle>
         <DialogContent dividers>
           {openCharacterId != null && (
@@ -214,7 +317,12 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
       </Dialog>
 
       {/* Scene modal (metadata + quick text) */}
-      <Dialog open={openSceneId != null} onClose={() => setOpenSceneId(null)} maxWidth="md" fullWidth>
+      <Dialog
+        open={openSceneId != null}
+        onClose={() => setOpenSceneId(null)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Scene</DialogTitle>
         <DialogContent dividers>
           {openSceneId != null && (
@@ -231,7 +339,12 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
       </Dialog>
 
       {/* Subplot modal */}
-      <Dialog open={openSubplotId != null} onClose={() => setOpenSubplotId(null)} maxWidth="md" fullWidth>
+      <Dialog
+        open={openSubplotId != null}
+        onClose={() => setOpenSubplotId(null)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Subplot</DialogTitle>
         <DialogContent dividers>
           {openSubplotId != null && (
@@ -255,8 +368,19 @@ export default function S9ReviewView({ vm, sm }: { vm: VM; sm: SM }) {
  * ────────────────────────────────────────────────────────────────────────── */
 
 function SceneBlock({
-  scene, characters, subplots, onOpenSceneMeta, onClickName, onClickSubplot, onJumpToTP,
-  isEditing, draftBuffer, onChangeDraft, onStartEdit, onCancelEdit, onSaveEdit
+  scene,
+  characters,
+  subplots,
+  onOpenSceneMeta,
+  onClickName,
+  onClickSubplot,
+  onJumpToTP,
+  isEditing,
+  draftBuffer,
+  onChangeDraft,
+  onStartEdit,
+  onCancelEdit,
+  onSaveEdit,
 }: {
   scene: Scene;
   characters: Character[];
@@ -273,27 +397,52 @@ function SceneBlock({
   onSaveEdit: () => void;
 }) {
   const slug = makeSlugline(scene.heading, scene.location, scene.time_of_day);
-  const text = scene.formatted_text && scene.formatted_text.trim().length
-    ? scene.formatted_text
-    : fallbackSceneText(scene);
+  const text =
+    scene.formatted_text && scene.formatted_text.trim().length
+      ? scene.formatted_text
+      : fallbackSceneText(scene);
 
-  const names = useMemo(() => characters.map(c => c.name).filter(Boolean), [characters]);
-  const subTitles = useMemo(() => subplots.map(s => s.title).filter(Boolean), [subplots]);
+  const names = useMemo(
+    () => characters.map((c) => c.name).filter(Boolean),
+    [characters],
+  );
+  const subTitles = useMemo(
+    () => subplots.map((s) => s.title).filter(Boolean),
+    [subplots],
+  );
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ cursor: "pointer" }} onClick={onOpenSceneMeta}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={1}
+        sx={{ cursor: "pointer" }}
+        onClick={onOpenSceneMeta}
+      >
         <Typography variant="subtitle2">#{scene.order}</Typography>
-        <Typography variant="subtitle2" sx={{ textDecoration: "underline" }}>{slug}</Typography>
+        <Typography variant="subtitle2" sx={{ textDecoration: "underline" }}>
+          {slug}
+        </Typography>
         {scene.is_key ? (
           <Chip
             size="small"
             color="warning"
             label={`TP#${scene.linked_turning_point ?? "-"}`}
-            onClick={(e) => { e.stopPropagation(); onJumpToTP(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onJumpToTP();
+            }}
           />
         ) : null}
-        <IconButton size="small" onClick={(e) => { e.stopPropagation(); onStartEdit(); }} title="Edit text">
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            onStartEdit();
+          }}
+          title="Edit text"
+        >
           <EditIcon fontSize="small" />
         </IconButton>
       </Stack>
@@ -316,14 +465,24 @@ function SceneBlock({
               <TextField
                 value={draftBuffer}
                 onChange={(e) => onChangeDraft(e.target.value)}
-                fullWidth multiline minRows={8}
+                fullWidth
+                multiline
+                minRows={8}
                 placeholder={text}
               />
             </Grid>
             <Grid item xs={12}>
               <Stack direction="row" spacing={1}>
-                <Button variant="contained" startIcon={<SaveIcon />} onClick={onSaveEdit}>Save</Button>
-                <Button startIcon={<CloseIcon />} onClick={onCancelEdit}>Cancel</Button>
+                <Button
+                  variant="contained"
+                  startIcon={<SaveIcon />}
+                  onClick={onSaveEdit}
+                >
+                  Save
+                </Button>
+                <Button startIcon={<CloseIcon />} onClick={onCancelEdit}>
+                  Cancel
+                </Button>
               </Stack>
             </Grid>
           </Grid>
@@ -337,23 +496,43 @@ function SceneBlock({
  * Character modal body
  * ────────────────────────────────────────────────────────────────────────── */
 
-function CharacterModalBody({ characterId, vm, onClose }: {
+function CharacterModalBody({
+  characterId,
+  vm,
+  onClose,
+}: {
   characterId: number;
   vm: ReturnType<typeof useAppViewModel>;
   onClose: () => void;
 }) {
   const sp = vm.screenplay!;
-  const c = (sp.characters ?? []).find(x => x.id === characterId);
-  if (!c) return <Typography variant="body2" color="text.secondary">Character not found.</Typography>;
+  const c = (sp.characters ?? []).find((x) => x.id === characterId);
+  if (!c)
+    return (
+      <Typography variant="body2" color="text.secondary">
+        Character not found.
+      </Typography>
+    );
 
   const onChange = async (next: any) => {
     const saved = await updateCharacter(sp.id, next);
-    vm.setScreenplay({ ...sp, characters: (sp.characters ?? []).map(x => x.id === saved.id ? saved : x) });
+    vm.setScreenplay({
+      ...sp,
+      characters: (sp.characters ?? []).map((x) =>
+        x.id === saved.id ? saved : x,
+      ),
+    });
     vm.markDirty("S9_REVIEW" as any, true);
   };
 
   return (
-    <CharacterCard c={c} onChange={onChange} onDelete={() => { /* opcional */ }} />
+    <CharacterCard
+      c={c}
+      onChange={onChange}
+      onDelete={() => {
+        /* opcional */
+      }}
+    />
   );
 }
 
@@ -361,18 +540,30 @@ function CharacterModalBody({ characterId, vm, onClose }: {
  * Subplot modal body (reusa SubplotCard)
  * ────────────────────────────────────────────────────────────────────────── */
 
-function SubplotModalBody({ subplotId, vm, onClose }: {
+function SubplotModalBody({
+  subplotId,
+  vm,
+  onClose,
+}: {
   subplotId: number;
   vm: ReturnType<typeof useAppViewModel>;
   onClose: () => void;
 }) {
   const sp = vm.screenplay!;
-  const s = (sp.subplots ?? []).find(x => x.id === subplotId);
-  if (!s) return <Typography variant="body2" color="text.secondary">Subplot not found.</Typography>;
+  const s = (sp.subplots ?? []).find((x) => x.id === subplotId);
+  if (!s)
+    return (
+      <Typography variant="body2" color="text.secondary">
+        Subplot not found.
+      </Typography>
+    );
 
   const onChange = async (next: Subplot) => {
     const saved = await updateSubplot(sp.id, next);
-    vm.setScreenplay({ ...sp, subplots: (sp.subplots ?? []).map(x => x.id === saved.id ? saved : x) });
+    vm.setScreenplay({
+      ...sp,
+      subplots: (sp.subplots ?? []).map((x) => (x.id === saved.id ? saved : x)),
+    });
     vm.markDirty("S9_REVIEW" as any, true);
   };
 
@@ -380,7 +571,9 @@ function SubplotModalBody({ subplotId, vm, onClose }: {
     <SubplotCard
       s={s}
       onChange={onChange}
-      onRemove={() => {/* opcional eliminar aquí */}}
+      onRemove={() => {
+        /* opcional eliminar aquí */
+      }}
       characters={sp.characters ?? []}
       turningPointsCount={(sp.turning_points ?? []).length}
     />
@@ -391,23 +584,40 @@ function SubplotModalBody({ subplotId, vm, onClose }: {
  * Scene modal body (reusa SceneEditor)
  * ────────────────────────────────────────────────────────────────────────── */
 
-function SceneModalBody({ sceneId, vm, onClose }: {
+function SceneModalBody({
+  sceneId,
+  vm,
+  onClose,
+}: {
   sceneId: number;
   vm: ReturnType<typeof useAppViewModel>;
   onClose: () => void;
 }) {
   const sp = vm.screenplay!;
-  const sc = (sp.scenes ?? []).find(x => x.id === sceneId);
-  if (!sc) return <Typography variant="body2" color="text.secondary">Scene not found.</Typography>;
+  const sc = (sp.scenes ?? []).find((x) => x.id === sceneId);
+  if (!sc)
+    return (
+      <Typography variant="body2" color="text.secondary">
+        Scene not found.
+      </Typography>
+    );
 
   const onChange = async (next: Scene) => {
     const saved = await updateScene(sp.id, next);
-    vm.setScreenplay({ ...sp, scenes: (sp.scenes ?? []).map(x => x.id === saved.id ? saved : x) });
+    vm.setScreenplay({
+      ...sp,
+      scenes: (sp.scenes ?? []).map((x) => (x.id === saved.id ? saved : x)),
+    });
     vm.markDirty("S9_REVIEW" as any, true);
   };
 
   return (
-    <SceneEditor sc={sc} onChange={onChange} onPropose={() => {}} loading={false} />
+    <SceneEditor
+      sc={sc}
+      onChange={onChange}
+      onPropose={() => {}}
+      loading={false}
+    />
   );
 }
 
@@ -415,7 +625,13 @@ function SceneModalBody({ sceneId, vm, onClose }: {
  * Read-only renderer con nombres y subplots clicables
  * ────────────────────────────────────────────────────────────────────────── */
 
-function FountainReadOnly({ text, names, subplotTitles, onClickName, onClickSubplot }: {
+function FountainReadOnly({
+  text,
+  names,
+  subplotTitles,
+  onClickName,
+  onClickSubplot,
+}: {
   text: string;
   names: string[];
   subplotTitles: string[];
@@ -426,21 +642,43 @@ function FountainReadOnly({ text, names, subplotTitles, onClickName, onClickSubp
 
   // Prepara regex (escapar y ordenar por longitud)
   const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const nameList = names.slice().sort((a, b) => b.length - a.length).map(esc).filter(Boolean);
-  const subplotList = subplotTitles.slice().sort((a, b) => b.length - a.length).map(esc).filter(Boolean);
+  const nameList = names
+    .slice()
+    .sort((a, b) => b.length - a.length)
+    .map(esc)
+    .filter(Boolean);
+  const subplotList = subplotTitles
+    .slice()
+    .sort((a, b) => b.length - a.length)
+    .map(esc)
+    .filter(Boolean);
 
-  const re = (nameList.length || subplotList.length)
-    ? new RegExp(`(?<!\\w)(${[...nameList, ...subplotList].join("|")})(?!\\w)`, "gi")
-    : null;
+  const re =
+    nameList.length || subplotList.length
+      ? new RegExp(
+          `(?<!\\w)(${[...nameList, ...subplotList].join("|")})(?!\\w)`,
+          "gi",
+        )
+      : null;
 
-  const isName = (token: string) => names.some(n => n.toLowerCase() === token.toLowerCase());
-  const isSubplot = (token: string) => subplotTitles.some(t => t.toLowerCase() === token.toLowerCase());
+  const isName = (token: string) =>
+    names.some((n) => n.toLowerCase() === token.toLowerCase());
+  const isSubplot = (token: string) =>
+    subplotTitles.some((t) => t.toLowerCase() === token.toLowerCase());
 
   const parts: (JSX.Element | string)[] = [];
 
   text.split("\n").forEach((line, i) => {
     if (!re) {
-      parts.push(<Typography key={i} component="div" sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace", fontSize: 14 }}>{line}</Typography>);
+      parts.push(
+        <Typography
+          key={i}
+          component="div"
+          sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace", fontSize: 14 }}
+        >
+          {line}
+        </Typography>,
+      );
       return;
     }
     const row: (JSX.Element | string)[] = [];
@@ -458,7 +696,7 @@ function FountainReadOnly({ text, names, subplotTitles, onClickName, onClickSubp
             label={token}
             onClick={() => onClickName(token)}
             sx={{ mx: 0.25, cursor: "pointer" }}
-          />
+          />,
         );
       } else if (isSubplot(token)) {
         row.push(
@@ -470,7 +708,7 @@ function FountainReadOnly({ text, names, subplotTitles, onClickName, onClickSubp
             label={token}
             onClick={() => onClickSubplot(token)}
             sx={{ mx: 0.25, cursor: "pointer" }}
-          />
+          />,
         );
       } else {
         row.push(token);
@@ -482,9 +720,15 @@ function FountainReadOnly({ text, names, subplotTitles, onClickName, onClickSubp
     const tail = line.slice(lastIndex);
     if (tail) row.push(tail);
     parts.push(
-      <Typography key={i} component="div" sx={{ fontFamily: "monospace", fontSize: 14 }}>
-        {row.map((seg, k) => <span key={k}>{seg}</span>)}
-      </Typography>
+      <Typography
+        key={i}
+        component="div"
+        sx={{ fontFamily: "monospace", fontSize: 14 }}
+      >
+        {row.map((seg, k) => (
+          <span key={k}>{seg}</span>
+        ))}
+      </Typography>,
     );
   });
 
@@ -505,7 +749,7 @@ function fallbackSceneText(s: Scene) {
     s.goal ? `> GOAL: ${s.goal}` : "",
     s.conflict ? `> CONFLICT: ${s.conflict}` : "",
     s.outcome ? `> OUTCOME: ${s.outcome}` : "",
-    ""
+    "",
   ].filter(Boolean);
   return lines.join("\n");
 }
