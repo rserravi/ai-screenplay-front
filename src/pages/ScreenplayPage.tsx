@@ -14,6 +14,8 @@ import S6KeyScenesView from "../states/S6KeyScenesView";
 import S7AllScenesView from "../states/S7AllScenesView";
 import S8FormattedDraftView from "../states/S8FormattedDraftView";
 import S9ReviewView from "../states/S9ReviewView";
+import S10ExportsView from "../states/S10ExportsView";
+
 
 import { useAppViewModel } from "../vm/useAppViewModel";
 import { useStateMachine } from "../vm/useStateMachine";
@@ -47,6 +49,7 @@ export default function ScreenplayPage() {
       case "S7_ALL_SCENES":     return <S7AllScenesView vm={vm} sm={sm} />;
       case "S8_FORMATTED_DRAFT":return <S8FormattedDraftView vm={vm} sm={sm} />;
       case "S9_REVIEW":         return <S9ReviewView vm={vm} sm={sm} />;
+      case "S10_EXPORTS":       return <S10ExportsView vm={vm} sm={sm} />;
       default:                  return <S1SynopsisView vm={vm} sm={sm} />;
     }
   }, [vm.currentState, vm, sm]);
