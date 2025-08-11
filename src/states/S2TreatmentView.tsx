@@ -1,6 +1,7 @@
 // src/states/S2TreatmentView.tsx
 import { useMemo, useState } from "react";
 import { Box, Stack, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography, Chip } from "@mui/material";
+import WorkflowActions from "../components/WorkflowActions";
 import type { useAppViewModel } from "../vm/useAppViewModel";
 import type { useStateMachine } from "../vm/useStateMachine";
 import { useAiJobs } from "../vm/useAiJobs";
@@ -91,11 +92,13 @@ export default function S2TreatmentView({ vm, sm }: { vm: VM; sm: SM }) {
           onPropose={() => propose("act3")}
         />
 
-        <Stack direction="row" spacing={1}>
-          <Button variant="contained" onClick={save} disabled={!vm.dirtyByState["S2_TREATMENT"]}>Save</Button>
-          <Button color="secondary" onClick={approve}>Approve & Continue (→ S3)</Button>
+        <WorkflowActions
+          onSave={save}
+          onApprove={approve}
+          saveDisabled={!vm.dirtyByState["S2_TREATMENT"]}
+        >
           <Chip label={`A1: ${counts.act1}w  A2: ${counts.act2}w  A3: ${counts.act3}w`} size="small" />
-        </Stack>
+        </WorkflowActions>
       </Stack>
 
       <Dialog open={!!sectionPreview} onClose={() => setSectionPreview(null)} maxWidth="md" fullWidth>

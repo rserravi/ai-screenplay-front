@@ -4,9 +4,8 @@ import {
   Box, Stack, Typography, Paper, Grid, TextField, Button, Chip, IconButton, Divider
 } from "@mui/material";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
-import SaveIcon from "@mui/icons-material/Save";
 import DownloadIcon from "@mui/icons-material/Download";
-import CheckIcon from "@mui/icons-material/CheckCircle";
+import WorkflowActions from "../components/WorkflowActions";
 
 import type { useAppViewModel } from "../vm/useAppViewModel";
 import type { useStateMachine } from "../vm/useStateMachine";
@@ -73,10 +72,14 @@ export default function S8FormattedDraftView({ vm, sm }: { vm: VM; sm: SM }) {
 
         <Stack direction="row" spacing={1} alignItems="center">
           <Button variant="outlined" startIcon={<DownloadIcon />} onClick={compile}>Compile & Download (.fountain)</Button>
-          <Button variant="contained" startIcon={<SaveIcon />} onClick={saveAll} disabled={!vm.dirtyByState["S8_FORMATTED_DRAFT"]}>Save</Button>
-          <Button color="secondary" startIcon={<CheckIcon />} onClick={approve}>Approve & Continue (→ S9)</Button>
-          <Chip size="small" label={`Scenes drafted: ${drafted}/${scenes.length}`} />
-          <Chip size="small" label={`Key drafted: ${coveredKeys}/${keyCount}`} />
+          <WorkflowActions
+            onSave={saveAll}
+            onApprove={approve}
+            saveDisabled={!vm.dirtyByState["S8_FORMATTED_DRAFT"]}
+          >
+            <Chip size="small" label={`Scenes drafted: ${drafted}/${scenes.length}`} />
+            <Chip size="small" label={`Key drafted: ${coveredKeys}/${keyCount}`} />
+          </WorkflowActions>
         </Stack>
 
         <Paper variant="outlined">

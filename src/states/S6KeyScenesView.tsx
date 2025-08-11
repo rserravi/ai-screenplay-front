@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import WorkflowActions from "../components/WorkflowActions";
 
 import type { useAppViewModel } from "../vm/useAppViewModel";
 import type { useStateMachine } from "../vm/useStateMachine";
@@ -125,10 +126,14 @@ export default function S6KeyScenesView({ vm, sm }: { vm: VM; sm: SM }) {
 
         <Stack direction="row" spacing={1} alignItems="center">
           <Button variant="outlined" onClick={proposeAll} disabled={!tps.length}>Propose All from Turning Points</Button>
-          <Button variant="contained" onClick={saveAll} disabled={!vm.dirtyByState["S6_KEY_SCENES"]}>Save</Button>
-          <Button color="secondary" onClick={approve}>Approve & Continue (→ S7)</Button>
-          <Chip size="small" label={`Key scenes: ${stats.count}`} />
-          <Chip size="small" label={`TP covered: ${stats.covered}/${stats.need || "-"}`} />
+          <WorkflowActions
+            onSave={saveAll}
+            onApprove={approve}
+            saveDisabled={!vm.dirtyByState["S6_KEY_SCENES"]}
+          >
+            <Chip size="small" label={`Key scenes: ${stats.count}`} />
+            <Chip size="small" label={`TP covered: ${stats.covered}/${stats.need || "-"}`} />
+          </WorkflowActions>
         </Stack>
 
         {/* Lista por TP */}

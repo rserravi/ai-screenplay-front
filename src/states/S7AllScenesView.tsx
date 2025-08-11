@@ -8,6 +8,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import WorkflowActions from "../components/WorkflowActions";
 
 import type { useAppViewModel } from "../vm/useAppViewModel";
 import type { useStateMachine } from "../vm/useStateMachine";
@@ -118,11 +119,15 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
 
         <Stack direction="row" spacing={1} alignItems="center">
           <Button variant="outlined" onClick={proposeNonKey} disabled={proposing}>Propose non-key scenes</Button>
-          <Button variant="contained" onClick={saveAll} disabled={!vm.dirtyByState["S7_ALL_SCENES"]}>Save</Button>
-          <Button color="secondary" onClick={approve}>Approve & Continue (→ S8)</Button>
-          <Chip size="small" label={`Total: ${stats.total}`} />
-          <Chip size="small" label={`Key: ${stats.key}`} />
-          <Chip size="small" label={`Non-key: ${stats.nonKey}`} />
+          <WorkflowActions
+            onSave={saveAll}
+            onApprove={approve}
+            saveDisabled={!vm.dirtyByState["S7_ALL_SCENES"]}
+          >
+            <Chip size="small" label={`Total: ${stats.total}`} />
+            <Chip size="small" label={`Key: ${stats.key}`} />
+            <Chip size="small" label={`Non-key: ${stats.nonKey}`} />
+          </WorkflowActions>
         </Stack>
 
         <Paper variant="outlined">
