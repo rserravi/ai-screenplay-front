@@ -1,0 +1,23 @@
+// src/models/enums.ts
+export type StateId =
+  | "S1_SYNOPSIS"
+  | "S2_TREATMENT"
+  | "S3_TURNING_POINTS"
+  | "S4_CHARACTERS"
+  | "S5_SUBPLOTS"
+  | "S6_KEY_SCENES"
+  | "S7_ALL_SCENES"
+  | "S8_FORMATTED_DRAFT"
+  | "S9_REVIEW";
+
+export const STATES: StateId[] = [
+  "S1_SYNOPSIS",
+  "S2_TREATMENT",
+  "S3_TURNING_POINTS",
+  "S4_CHARACTERS",
+  "S5_SUBPLOTS",
+  "S6_KEY_SCENES",
+  "S7_ALL_SCENES",
+  "S8_FORMATTED_DRAFT",
+  "S9_REVIEW"
+];
