@@ -32,8 +32,7 @@ declare module "fountain-js" {
     title?: string;
   }
 
-  const fountain: {
-    parse: (src: string) => FountainParseResult;
-  };
-  export default fountain;
+  export class Fountain {
+    parse(src: string, getTokens?: boolean): FountainParseResult;
+  }
 }
