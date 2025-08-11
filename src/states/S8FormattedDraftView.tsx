@@ -5,13 +5,13 @@ import {
   Stack,
   Typography,
   Paper,
-  Grid,
   TextField,
   Button,
   Chip,
   IconButton,
   Divider,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -102,14 +102,26 @@ export default function S8FormattedDraftView({ vm, sm }: { vm: VM; sm: SM }) {
         </Typography>
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <Button variant="outlined" startIcon={<DownloadIcon />} onClick={compile}>Compile & Download (.fountain)</Button>
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            onClick={compile}
+          >
+            Compile & Download (.fountain)
+          </Button>
           <WorkflowActions
             onSave={saveAll}
             onApprove={approve}
             saveDisabled={!vm.dirtyByState["S8_FORMATTED_DRAFT"]}
           >
-            <Chip size="small" label={`Scenes drafted: ${drafted}/${scenes.length}`} />
-            <Chip size="small" label={`Key drafted: ${coveredKeys}/${keyCount}`} />
+            <Chip
+              size="small"
+              label={`Scenes drafted: ${drafted}/${scenes.length}`}
+            />
+            <Chip
+              size="small"
+              label={`Key drafted: ${coveredKeys}/${keyCount}`}
+            />
           </WorkflowActions>
         </Stack>
 
@@ -202,7 +214,7 @@ export function SceneEditor({
         </Stack>
       </Stack>
       <Grid container spacing={1}>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField
             label="Fountain (formatted text for this scene)"
             value={sc.formatted_text ?? ""}

@@ -5,7 +5,6 @@ import {
   Stack,
   Typography,
   Paper,
-  Grid,
   TextField,
   Select,
   MenuItem,
@@ -18,6 +17,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -182,16 +182,24 @@ export default function S6KeyScenesView({ vm, sm }: { vm: VM; sm: SM }) {
         </Typography>
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <Button variant="outlined" onClick={proposeAll} disabled={!tps.length}>Propose All from Turning Points</Button>
+          <Button
+            variant="outlined"
+            onClick={proposeAll}
+            disabled={!tps.length}
+          >
+            Propose All from Turning Points
+          </Button>
           <WorkflowActions
             onSave={saveAll}
             onApprove={approve}
             saveDisabled={!vm.dirtyByState["S6_KEY_SCENES"]}
           >
             <Chip size="small" label={`Key scenes: ${stats.count}`} />
-            <Chip size="small" label={`TP covered: ${stats.covered}/${stats.need || "-"}`} />
+            <Chip
+              size="small"
+              label={`TP covered: ${stats.covered}/${stats.need || "-"}`}
+            />
           </WorkflowActions>
-
         </Stack>
 
         {/* Lista por TP */}
@@ -304,7 +312,7 @@ function SceneRow({
   return (
     <Paper variant="outlined" sx={{ p: 1.5 }}>
       <Grid container spacing={1} alignItems="center">
-        <Grid item xs={12} md={2.2}>
+        <Grid xs={12} md={2.2}>
           <TextField
             size="small"
             label="Title"
@@ -312,7 +320,7 @@ function SceneRow({
             onChange={(e) => set({ title: e.target.value })}
           />
         </Grid>
-        <Grid item xs={12} md={1.8}>
+        <Grid xs={12} md={1.8}>
           <Select
             size="small"
             fullWidth
@@ -326,7 +334,7 @@ function SceneRow({
             ))}
           </Select>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid xs={12} md={3}>
           <TextField
             size="small"
             label="Location"
@@ -335,7 +343,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} md={1.5}>
+        <Grid xs={12} md={1.5}>
           <Select
             size="small"
             fullWidth
@@ -349,7 +357,7 @@ function SceneRow({
             ))}
           </Select>
         </Grid>
-        <Grid item xs={12} md={3.5}>
+        <Grid xs={12} md={3.5}>
           <TextField
             size="small"
             label="Synopsis"
@@ -358,7 +366,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} md={0.6}>
+        <Grid xs={12} md={0.6}>
           <IconButton
             size="small"
             onClick={() => onRemove(scene.id)}
@@ -369,7 +377,7 @@ function SceneRow({
         </Grid>
       </Grid>
       <Grid container spacing={1} mt={0.5}>
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <TextField
             size="small"
             label="Goal"
@@ -378,7 +386,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <TextField
             size="small"
             label="Conflict"
@@ -387,7 +395,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <TextField
             size="small"
             label="Outcome"

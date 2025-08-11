@@ -10,12 +10,12 @@ import {
   MenuItem,
   Chip,
   Paper,
-  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import type { useAppViewModel } from "../vm/useAppViewModel";
 import type { useStateMachine } from "../vm/useStateMachine";
@@ -105,13 +105,13 @@ export default function S3TurningPointsView({ vm, sm }: { vm: VM; sm: SM }) {
 
         <Paper variant="outlined">
           <Grid container p={1} sx={{ bgcolor: "grey.50" }}>
-            <Grid item xs={12} md={3}>
+            <Grid xs={12} md={3}>
               <Typography variant="caption">Type</Typography>
             </Grid>
-            <Grid item xs={12} md={7}>
+            <Grid xs={12} md={7}>
               <Typography variant="caption">Summary</Typography>
             </Grid>
-            <Grid item xs={12} md={2}>
+            <Grid xs={12} md={2}>
               <Typography variant="caption">Order</Typography>
             </Grid>
           </Grid>
@@ -125,7 +125,7 @@ export default function S3TurningPointsView({ vm, sm }: { vm: VM; sm: SM }) {
               spacing={1}
               sx={{ borderTop: "1px solid", borderColor: "divider" }}
             >
-              <Grid item xs={12} md={3}>
+              <Grid xs={12} md={3}>
                 <Select
                   fullWidth
                   size="small"
@@ -141,7 +141,7 @@ export default function S3TurningPointsView({ vm, sm }: { vm: VM; sm: SM }) {
                   ))}
                 </Select>
               </Grid>
-              <Grid item xs={12} md={7}>
+              <Grid xs={12} md={7}>
                 <TextField
                   value={row.summary}
                   onChange={(e) => setRow(idx, { summary: e.target.value })}
@@ -152,7 +152,7 @@ export default function S3TurningPointsView({ vm, sm }: { vm: VM; sm: SM }) {
                   placeholder="What happens here and how it changes trajectory?"
                 />
               </Grid>
-              <Grid item xs={12} md={2}>
+              <Grid xs={12} md={2}>
                 <Select
                   fullWidth
                   size="small"

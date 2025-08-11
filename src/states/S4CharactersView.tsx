@@ -5,7 +5,6 @@ import {
   Stack,
   Typography,
   Paper,
-  Grid,
   TextField,
   Select,
   MenuItem,
@@ -18,6 +17,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -267,7 +267,7 @@ export default function S4CharactersView({ vm, sm }: { vm: VM; sm: SM }) {
           <Divider />
           <Grid container spacing={2} p={2}>
             {(chars ?? []).map((c) => (
-              <Grid item xs={12} md={6} key={c.id}>
+              <Grid xs={12} md={6} key={c.id}>
                 <CharacterCard
                   c={c}
                   onChange={editCharacter}
@@ -308,7 +308,7 @@ export default function S4CharactersView({ vm, sm }: { vm: VM; sm: SM }) {
               />
             ))}
             {rels.length === 0 && (
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -413,7 +413,7 @@ export function CharacterCard({
       </Stack>
 
       <Grid container spacing={1} mt={0.5}>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <TextField
             label="Name"
             value={c.name}
@@ -422,7 +422,7 @@ export function CharacterCard({
             size="small"
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <Select
             fullWidth
             size="small"
@@ -437,7 +437,7 @@ export function CharacterCard({
           </Select>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <TextField
             label="Goal"
             value={c.goal ?? ""}
@@ -446,7 +446,7 @@ export function CharacterCard({
             size="small"
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <TextField
             label="Need"
             value={c.need ?? ""}
@@ -455,7 +455,7 @@ export function CharacterCard({
             size="small"
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <TextField
             label="Flaw"
             value={c.flaw ?? ""}
@@ -464,7 +464,7 @@ export function CharacterCard({
             size="small"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField
             label="Arc summary"
             value={c.arc_summary ?? ""}
@@ -476,7 +476,7 @@ export function CharacterCard({
           />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <Typography variant="caption" color="text.secondary">
             Archetypes per act
           </Typography>
@@ -486,7 +486,7 @@ export function CharacterCard({
                 c.archetype_timeline?.find((b) => b.phase === p)?.archetype ??
                 "ALLY";
               return (
-                <Grid item xs={12} md={4} key={p}>
+                <Grid xs={12} md={4} key={p}>
                   <Select
                     fullWidth
                     size="small"
@@ -508,7 +508,7 @@ export function CharacterCard({
           </Grid>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField
             label="Tags (comma-separated)"
             value={(c.tags ?? []).join(", ")}
@@ -544,7 +544,7 @@ function RelationshipRow({
 
   return (
     <Grid container spacing={1} alignItems="center">
-      <Grid item xs={12} md={3}>
+      <Grid xs={12} md={3}>
         <Select
           fullWidth
           size="small"
@@ -558,7 +558,7 @@ function RelationshipRow({
           ))}
         </Select>
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid xs={12} md={4}>
         <Select
           fullWidth
           size="small"
@@ -572,7 +572,7 @@ function RelationshipRow({
           ))}
         </Select>
       </Grid>
-      <Grid item xs={12} md={3}>
+      <Grid xs={12} md={3}>
         <Select
           fullWidth
           size="small"
@@ -586,7 +586,7 @@ function RelationshipRow({
           ))}
         </Select>
       </Grid>
-      <Grid item xs={12} md={1.5}>
+      <Grid xs={12} md={1.5}>
         <TextField
           label="Strength"
           size="small"
@@ -596,7 +596,7 @@ function RelationshipRow({
           onChange={(e) => set({ strength: Number(e.target.value) })}
         />
       </Grid>
-      <Grid item xs={12} md={1.5}>
+      <Grid xs={12} md={1.5}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <TextField
             label="Trust"
