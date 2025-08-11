@@ -5,7 +5,6 @@ import {
   Stack,
   Typography,
   Paper,
-  Grid,
   TextField,
   Select,
   MenuItem,
@@ -14,6 +13,7 @@ import {
   IconButton,
   Divider,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -168,7 +168,13 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
         </Typography>
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <Button variant="outlined" onClick={proposeNonKey} disabled={proposing}>Propose non-key scenes</Button>
+          <Button
+            variant="outlined"
+            onClick={proposeNonKey}
+            disabled={proposing}
+          >
+            Propose non-key scenes
+          </Button>
           <WorkflowActions
             onSave={saveAll}
             onApprove={approve}
@@ -178,7 +184,6 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
             <Chip size="small" label={`Key: ${stats.key}`} />
             <Chip size="small" label={`Non-key: ${stats.nonKey}`} />
           </WorkflowActions>
-
         </Stack>
 
         <Paper variant="outlined">
@@ -243,10 +248,10 @@ function SceneRow({
   return (
     <Paper variant="outlined" sx={{ p: 1.25 }}>
       <Grid container spacing={1} alignItems="center">
-        <Grid item xs={12} md={0.8}>
+        <Grid xs={12} md={0.8}>
           <Chip size="small" label={scene.order} />
         </Grid>
-        <Grid item xs={12} md={1.4}>
+        <Grid xs={12} md={1.4}>
           {scene.is_key ? (
             <Chip
               size="small"
@@ -257,7 +262,7 @@ function SceneRow({
             <Chip size="small" variant="outlined" label="non-key" />
           )}
         </Grid>
-        <Grid item xs={12} md={1.8}>
+        <Grid xs={12} md={1.8}>
           <Select
             size="small"
             fullWidth
@@ -271,7 +276,7 @@ function SceneRow({
             ))}
           </Select>
         </Grid>
-        <Grid item xs={12} md={2.5}>
+        <Grid xs={12} md={2.5}>
           <TextField
             size="small"
             label="Location"
@@ -280,7 +285,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} md={1.4}>
+        <Grid xs={12} md={1.4}>
           <Select
             size="small"
             fullWidth
@@ -294,7 +299,7 @@ function SceneRow({
             ))}
           </Select>
         </Grid>
-        <Grid item xs={12} md={3.5}>
+        <Grid xs={12} md={3.5}>
           <TextField
             size="small"
             label="Synopsis"
@@ -303,7 +308,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} md={0.6}>
+        <Grid xs={12} md={0.6}>
           <Stack direction="row" spacing={0.5}>
             <IconButton
               size="small"
@@ -321,7 +326,7 @@ function SceneRow({
             </IconButton>
           </Stack>
         </Grid>
-        <Grid item xs={12} md={0.6}>
+        <Grid xs={12} md={0.6}>
           <Stack direction="row" spacing={0.5}>
             <IconButton size="small" onClick={onAddBelow} title="Add below">
               <AddIcon fontSize="small" />
