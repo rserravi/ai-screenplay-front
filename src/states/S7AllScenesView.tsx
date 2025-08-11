@@ -1,9 +1,20 @@
 // src/states/S7AllScenesView.tsx
 import { useMemo, useState } from "react";
 import {
-  Box, Stack, Typography, Paper, Grid, TextField, Select, MenuItem,
-  Button, Chip, IconButton, Divider
+  Box,
+  Stack,
+  Typography,
+  Paper,
+  Grid,
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  Chip,
+  IconButton,
+  Divider,
 } from "@mui/material";
+import { useNotify } from "./useNotify";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AddIcon from "@mui/icons-material/Add";
@@ -13,7 +24,13 @@ import WorkflowActions from "../components/WorkflowActions";
 import type { useAppViewModel } from "../vm/useAppViewModel";
 import type { useStateMachine } from "../vm/useStateMachine";
 import type { Scene, Heading, DayPart } from "../models/scenes";
-import { addScene, updateScene, removeScene, reorderScenes, moveScene } from "../services/screenplayService";
+import {
+  addScene,
+  updateScene,
+  removeScene,
+  reorderScenes,
+  moveScene,
+} from "../services/screenplayService";
 import { proposeNonKeyScenes } from "../services/aiJobsService";
 
 type VM = ReturnType<typeof useAppViewModel>;
@@ -26,16 +43,20 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
   const sp = vm.screenplay;
   if (!sp) return <Typography variant="body2">Loading screenplay…</Typography>;
 
-  const scenes = (sp.scenes ?? []).slice().sort((a,b)=>a.order-b.order);
+  const scenes = (sp.scenes ?? []).slice().sort((a, b) => a.order - b.order);
   const tps = sp.turning_points ?? [];
 
-  const stats = useMemo(() => ({
-    total: scenes.length,
-    key: scenes.filter(s => s.is_key).length,
-    nonKey: scenes.filter(s => !s.is_key).length
-  }), [scenes]);
+  const stats = useMemo(
+    () => ({
+      total: scenes.length,
+      key: scenes.filter((s) => s.is_key).length,
+      nonKey: scenes.filter((s) => !s.is_key).length,
+    }),
+    [scenes],
+  );
 
   const [proposing, setProposing] = useState(false);
+  const notify = useNotify();
 
   const addSceneBelow = async (afterOrder: number) => {
     // Añade y reordena (lo sencillo en mock: insertar al final y luego reordenar ordenes)
@@ -47,13 +68,15 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
       location: "",
       time_of_day: "DAY",
       synopsis: "",
-      goal: "", conflict: "", outcome: "",
-      characters: []
+      goal: "",
+      conflict: "",
+      outcome: "",
+      characters: [],
     });
     const ids = scenes
-      .flatMap(s => s.order <= afterOrder ? [s.id] : [])
+      .flatMap((s) => (s.order <= afterOrder ? [s.id] : []))
       .concat([created.id])
-      .concat(scenes.filter(s => s.order > afterOrder).map(s => s.id));
+      .concat(scenes.filter((s) => s.order > afterOrder).map((s) => s.id));
     const updated = await reorderScenes(sp.id, ids);
     vm.setScreenplay({ ...sp, scenes: updated });
     vm.markDirty("S7_ALL_SCENES", true);
@@ -61,7 +84,12 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
 
   const remove = async (id: number) => {
     await removeScene(sp.id, id);
-    vm.setScreenplay({ ...sp, scenes: (sp.scenes ?? []).filter(s => s.id !== id).map((s, i) => ({ ...s, order: i + 1 })) });
+    vm.setScreenplay({
+      ...sp,
+      scenes: (sp.scenes ?? [])
+        .filter((s) => s.id !== id)
+        .map((s, i) => ({ ...s, order: i + 1 })),
+    });
     vm.markDirty("S7_ALL_SCENES", true);
   };
 
@@ -73,7 +101,10 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
 
   const onChange = async (s: Scene) => {
     const saved = await updateScene(sp.id, s);
-    vm.setScreenplay({ ...sp, scenes: (sp.scenes ?? []).map(x => x.id === s.id ? saved : x) });
+    vm.setScreenplay({
+      ...sp,
+      scenes: (sp.scenes ?? []).map((x) => (x.id === s.id ? saved : x)),
+    });
     vm.markDirty("S7_ALL_SCENES", true);
   };
 
@@ -82,17 +113,33 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
     try {
       const res = await proposeNonKeyScenes(sp.id, {
         treatment: sp.treatment,
-        turning_points: tps.map(tp => ({ order: tp.order, type: tp.type, summary: tp.summary })),
-        subplots: (sp.subplots ?? []).map(s => ({ title: s.title, type: s.type, beats: s.beats })),
-        existing: scenes.map(s => ({ is_key: s.is_key, linked_turning_point: s.linked_turning_point })),
-        targetCount: 40, genre: sp.genre, tone: sp.tone
+        turning_points: tps.map((tp) => ({
+          order: tp.order,
+          type: tp.type,
+          summary: tp.summary,
+        })),
+        subplots: (sp.subplots ?? []).map((s) => ({
+          title: s.title,
+          type: s.type,
+          beats: s.beats,
+        })),
+        existing: scenes.map((s) => ({
+          is_key: s.is_key,
+          linked_turning_point: s.linked_turning_point,
+        })),
+        targetCount: 40,
+        genre: sp.genre,
+        tone: sp.tone,
       });
       // apéndalas al final
       for (const p of res.scenes) {
         const created = await addScene(sp.id, p);
         sp.scenes = [...(sp.scenes ?? []), created];
       }
-      vm.setScreenplay({ ...sp, scenes: (sp.scenes ?? []).slice().sort((a,b)=>a.order-b.order) });
+      vm.setScreenplay({
+        ...sp,
+        scenes: (sp.scenes ?? []).slice().sort((a, b) => a.order - b.order),
+      });
       vm.markDirty("S7_ALL_SCENES", true);
     } finally {
       setProposing(false);
@@ -106,7 +153,9 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
   const approve = async () => {
     const ok = await sm.requestTransition("S8_FORMATTED_DRAFT");
     if (!ok) {
-      alert("Guard fails: ensure contiguous numbering, meta filled (heading/location/time) and all key TPs covered with ≥30-char synopsis.");
+      notify(
+        "Guard fails: ensure contiguous numbering, meta filled (heading/location/time) and all key TPs covered with ≥30-char synopsis.",
+      );
     }
   };
 
@@ -114,7 +163,8 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
     <Box>
       <Stack spacing={2}>
         <Typography variant="body2" color="text.secondary">
-          Complete the scene list (key and non-key). You can add, edit and reorder. Use AI to propose connective scenes.
+          Complete the scene list (key and non-key). You can add, edit and
+          reorder. Use AI to propose connective scenes.
         </Typography>
 
         <Stack direction="row" spacing={1} alignItems="center">
@@ -128,12 +178,21 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
             <Chip size="small" label={`Key: ${stats.key}`} />
             <Chip size="small" label={`Non-key: ${stats.nonKey}`} />
           </WorkflowActions>
+
         </Stack>
 
         <Paper variant="outlined">
-          <Stack direction="row" alignItems="center" justifyContent="space-between" px={2} py={1}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            px={2}
+            py={1}
+          >
             <Typography variant="subtitle1">Scenes</Typography>
-            <Typography variant="caption" color="text.secondary">Use the arrows to reorder; add below any scene.</Typography>
+            <Typography variant="caption" color="text.secondary">
+              Use the arrows to reorder; add below any scene.
+            </Typography>
           </Stack>
           <Divider />
           <Box sx={{ p: 2 }}>
@@ -151,7 +210,9 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
                 />
               ))}
               {scenes.length === 0 && (
-                <Typography variant="body2" color="text.secondary">No scenes yet. Start by adding or proposing.</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  No scenes yet. Start by adding or proposing.
+                </Typography>
               )}
             </Stack>
           </Box>
@@ -162,14 +223,20 @@ export default function S7AllScenesView({ vm, sm }: { vm: VM; sm: SM }) {
 }
 
 function SceneRow({
-  scene, isFirst, isLast, onChange, onRemove, onMove, onAddBelow
+  scene,
+  isFirst,
+  isLast,
+  onChange,
+  onRemove,
+  onMove,
+  onAddBelow,
 }: {
   scene: Scene;
   isFirst: boolean;
   isLast: boolean;
   onChange: (s: Scene) => void;
   onRemove: (id: number) => void;
-  onMove: (id: number, dir: "UP"|"DOWN") => void;
+  onMove: (id: number, dir: "UP" | "DOWN") => void;
   onAddBelow: () => void;
 }) {
   const set = (patch: Partial<Scene>) => onChange({ ...scene, ...patch });
@@ -180,34 +247,92 @@ function SceneRow({
           <Chip size="small" label={scene.order} />
         </Grid>
         <Grid item xs={12} md={1.4}>
-          {scene.is_key ? <Chip size="small" color="warning" label={`TP#${scene.linked_turning_point ?? "-"}`} /> : <Chip size="small" variant="outlined" label="non-key" />}
+          {scene.is_key ? (
+            <Chip
+              size="small"
+              color="warning"
+              label={`TP#${scene.linked_turning_point ?? "-"}`}
+            />
+          ) : (
+            <Chip size="small" variant="outlined" label="non-key" />
+          )}
         </Grid>
         <Grid item xs={12} md={1.8}>
-          <Select size="small" fullWidth value={scene.heading ?? "INT"} onChange={e => set({ heading: e.target.value as Heading })}>
-            {HEADINGS.map(h => <MenuItem key={h} value={h}>{h}</MenuItem>)}
+          <Select
+            size="small"
+            fullWidth
+            value={scene.heading ?? "INT"}
+            onChange={(e) => set({ heading: e.target.value as Heading })}
+          >
+            {HEADINGS.map((h) => (
+              <MenuItem key={h} value={h}>
+                {h}
+              </MenuItem>
+            ))}
           </Select>
         </Grid>
         <Grid item xs={12} md={2.5}>
-          <TextField size="small" label="Location" value={scene.location ?? ""} onChange={e => set({ location: e.target.value })} fullWidth />
+          <TextField
+            size="small"
+            label="Location"
+            value={scene.location ?? ""}
+            onChange={(e) => set({ location: e.target.value })}
+            fullWidth
+          />
         </Grid>
         <Grid item xs={12} md={1.4}>
-          <Select size="small" fullWidth value={scene.time_of_day ?? "DAY"} onChange={e => set({ time_of_day: e.target.value as DayPart })}>
-            {TIMES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+          <Select
+            size="small"
+            fullWidth
+            value={scene.time_of_day ?? "DAY"}
+            onChange={(e) => set({ time_of_day: e.target.value as DayPart })}
+          >
+            {TIMES.map((t) => (
+              <MenuItem key={t} value={t}>
+                {t}
+              </MenuItem>
+            ))}
           </Select>
         </Grid>
         <Grid item xs={12} md={3.5}>
-          <TextField size="small" label="Synopsis" value={scene.synopsis} onChange={e => set({ synopsis: e.target.value })} fullWidth />
+          <TextField
+            size="small"
+            label="Synopsis"
+            value={scene.synopsis}
+            onChange={(e) => set({ synopsis: e.target.value })}
+            fullWidth
+          />
         </Grid>
         <Grid item xs={12} md={0.6}>
           <Stack direction="row" spacing={0.5}>
-            <IconButton size="small" disabled={isFirst} onClick={() => onMove(scene.id, "UP")}><ArrowUpwardIcon fontSize="small" /></IconButton>
-            <IconButton size="small" disabled={isLast} onClick={() => onMove(scene.id, "DOWN")}><ArrowDownwardIcon fontSize="small" /></IconButton>
+            <IconButton
+              size="small"
+              disabled={isFirst}
+              onClick={() => onMove(scene.id, "UP")}
+            >
+              <ArrowUpwardIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              size="small"
+              disabled={isLast}
+              onClick={() => onMove(scene.id, "DOWN")}
+            >
+              <ArrowDownwardIcon fontSize="small" />
+            </IconButton>
           </Stack>
         </Grid>
         <Grid item xs={12} md={0.6}>
           <Stack direction="row" spacing={0.5}>
-            <IconButton size="small" onClick={onAddBelow} title="Add below"><AddIcon fontSize="small" /></IconButton>
-            <IconButton size="small" onClick={() => onRemove(scene.id)} title="Delete"><DeleteIcon fontSize="small" /></IconButton>
+            <IconButton size="small" onClick={onAddBelow} title="Add below">
+              <AddIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={() => onRemove(scene.id)}
+              title="Delete"
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
           </Stack>
         </Grid>
       </Grid>

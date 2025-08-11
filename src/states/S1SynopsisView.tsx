@@ -2,10 +2,11 @@
 import { useState } from "react";
 import { Box, Stack, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from "@mui/material";
 import WorkflowActions from "../components/WorkflowActions";
+
 import type { useAppViewModel } from "../vm/useAppViewModel";
 import type { useStateMachine } from "../vm/useStateMachine";
 import { proposeSynopsis } from "../services/aiJobsService";
-
+import { useNotify } from "./useNotify";
 type VM = ReturnType<typeof useAppViewModel>;
 type SM = ReturnType<typeof useStateMachine>;
 
@@ -13,6 +14,7 @@ export default function S1SynopsisView({ vm, sm }: { vm: VM; sm: SM }) {
   const [idea, setIdea] = useState("");
   const [proposal, setProposal] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const notify = useNotify();
 
   const sp = vm.screenplay;
   if (!sp) return <Typography variant="body2">Loading screenplay…</Typography>;
@@ -22,7 +24,7 @@ export default function S1SynopsisView({ vm, sm }: { vm: VM; sm: SM }) {
       idea,
       genre: sp.genre,
       tone: sp.tone,
-      currentSynopsis: sp.synopsis
+      currentSynopsis: sp.synopsis,
     });
     setProposal(res.proposal);
     setPreviewOpen(true);
@@ -40,13 +42,16 @@ export default function S1SynopsisView({ vm, sm }: { vm: VM; sm: SM }) {
       synopsis: sp.synopsis,
       logline: sp.logline,
       genre: sp.genre,
-      tone: sp.tone
+      tone: sp.tone,
     });
   };
 
   const onApprove = async () => {
     const ok = await sm.requestTransition("S2_TREATMENT");
-    if (!ok) alert("Guard fails: ensure the synopsis has enough content (>= ~40 chars in mock).");
+    if (!ok)
+      notify(
+        "Guard fails: ensure the synopsis has enough content (>= ~40 chars in mock).",
+      );
   };
 
   return (
@@ -55,26 +60,38 @@ export default function S1SynopsisView({ vm, sm }: { vm: VM; sm: SM }) {
         <TextField
           label="Working title"
           value={sp.title}
-          onChange={(e) => { vm.setScreenplay({ ...sp, title: e.target.value }); vm.markDirty("S1_SYNOPSIS", true); }}
+          onChange={(e) => {
+            vm.setScreenplay({ ...sp, title: e.target.value });
+            vm.markDirty("S1_SYNOPSIS", true);
+          }}
         />
         <Stack direction="row" spacing={2}>
           <TextField
             label="Genre"
             value={sp.genre ?? ""}
-            onChange={(e) => { vm.setScreenplay({ ...sp, genre: e.target.value }); vm.markDirty("S1_SYNOPSIS", true); }}
+            onChange={(e) => {
+              vm.setScreenplay({ ...sp, genre: e.target.value });
+              vm.markDirty("S1_SYNOPSIS", true);
+            }}
             sx={{ flex: 1 }}
           />
           <TextField
             label="Tone"
             value={sp.tone ?? ""}
-            onChange={(e) => { vm.setScreenplay({ ...sp, tone: e.target.value }); vm.markDirty("S1_SYNOPSIS", true); }}
+            onChange={(e) => {
+              vm.setScreenplay({ ...sp, tone: e.target.value });
+              vm.markDirty("S1_SYNOPSIS", true);
+            }}
             sx={{ flex: 1 }}
           />
         </Stack>
         <TextField
           label="Logline"
           value={sp.logline ?? ""}
-          onChange={(e) => { vm.setScreenplay({ ...sp, logline: e.target.value }); vm.markDirty("S1_SYNOPSIS", true); }}
+          onChange={(e) => {
+            vm.setScreenplay({ ...sp, logline: e.target.value });
+            vm.markDirty("S1_SYNOPSIS", true);
+          }}
           helperText="One-sentence promise of the story"
         />
         <TextField
@@ -86,8 +103,12 @@ export default function S1SynopsisView({ vm, sm }: { vm: VM; sm: SM }) {
         <TextField
           label="Synopsis"
           value={sp.synopsis ?? ""}
-          onChange={(e) => { vm.setScreenplay({ ...sp, synopsis: e.target.value }); vm.markDirty("S1_SYNOPSIS", true); }}
-          multiline minRows={6}
+          onChange={(e) => {
+            vm.setScreenplay({ ...sp, synopsis: e.target.value });
+            vm.markDirty("S1_SYNOPSIS", true);
+          }}
+          multiline
+          minRows={6}
         />
 
         <Stack direction="row" spacing={1} alignItems="center">
@@ -100,14 +121,21 @@ export default function S1SynopsisView({ vm, sm }: { vm: VM; sm: SM }) {
         </Stack>
       </Stack>
 
-      <Dialog open={previewOpen} onClose={() => setPreviewOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>AI Proposal — Synopsis</DialogTitle>
         <DialogContent dividers>
           <Typography whiteSpace="pre-wrap">{proposal}</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setPreviewOpen(false)}>Close</Button>
-          <Button variant="contained" onClick={applyProposal}>Apply to Synopsis</Button>
+          <Button variant="contained" onClick={applyProposal}>
+            Apply to Synopsis
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

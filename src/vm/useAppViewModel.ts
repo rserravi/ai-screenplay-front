@@ -82,3 +82,5 @@ export function useAppViewModel() {
     loadScreenplay, saveScreenplay
   };
 }
+
+export type AppViewModel = ReturnType<typeof useAppViewModel>;
