@@ -10,10 +10,10 @@ import {
   MenuItem,
   Button,
   Chip,
+  Grid,
   IconButton,
   Divider,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -248,10 +248,10 @@ function SceneRow({
   return (
     <Paper variant="outlined" sx={{ p: 1.25 }}>
       <Grid container spacing={1} alignItems="center">
-        <Grid xs={12} md={0.8}>
+        <Grid size={{ xs: 12, md: 0.8 }}>
           <Chip size="small" label={scene.order} />
         </Grid>
-        <Grid xs={12} md={1.4}>
+        <Grid size={{ xs: 12, md: 1.4 }}>
           {scene.is_key ? (
             <Chip
               size="small"
@@ -262,7 +262,7 @@ function SceneRow({
             <Chip size="small" variant="outlined" label="non-key" />
           )}
         </Grid>
-        <Grid xs={12} md={1.8}>
+        <Grid size={{ xs: 12, md: 1.8 }}>
           <Select
             size="small"
             fullWidth
@@ -276,7 +276,7 @@ function SceneRow({
             ))}
           </Select>
         </Grid>
-        <Grid xs={12} md={2.5}>
+        <Grid size={{ xs: 12, md: 2.5 }}>
           <TextField
             size="small"
             label="Location"
@@ -285,7 +285,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid xs={12} md={1.4}>
+        <Grid size={{ xs: 12, md: 1.4 }}>
           <Select
             size="small"
             fullWidth
@@ -299,7 +299,7 @@ function SceneRow({
             ))}
           </Select>
         </Grid>
-        <Grid xs={12} md={3.5}>
+        <Grid size={{ xs: 12, md: 3.5 }}>
           <TextField
             size="small"
             label="Synopsis"
@@ -308,7 +308,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid xs={12} md={0.6}>
+        <Grid size={{ xs: 12, md: 0.6 }}>
           <Stack direction="row" spacing={0.5}>
             <IconButton
               size="small"
@@ -326,7 +326,7 @@ function SceneRow({
             </IconButton>
           </Stack>
         </Grid>
-        <Grid xs={12} md={0.6}>
+        <Grid size={{ xs: 12, md: 0.6 }}>
           <Stack direction="row" spacing={0.5}>
             <IconButton size="small" onClick={onAddBelow} title="Add below">
               <AddIcon fontSize="small" />

@@ -2,7 +2,6 @@
 import { useEffect, useMemo } from "react";
 import { Box } from "@mui/material";
 
-import { Box, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import { ScreenplayTabs } from "../components/ScreenplayTabs";

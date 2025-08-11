@@ -10,6 +10,7 @@ import {
   MenuItem,
   Button,
   Chip,
+  Grid,
   IconButton,
   Divider,
   Dialog,
@@ -19,7 +20,6 @@ import {
   Checkbox,
   ListItemText,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -188,7 +188,7 @@ export default function S5SubplotsView({ vm, sm }: { vm: VM; sm: SM }) {
           <Divider />
           <Grid container spacing={2} p={2}>
             {subplots.map((spo) => (
-              <Grid xs={12} key={spo.id}>
+              <Grid size={{ xs: 12, md: 6 }} key={spo.id}>
                 <SubplotCard
                   s={spo}
                   onChange={onChange}
@@ -199,7 +199,7 @@ export default function S5SubplotsView({ vm, sm }: { vm: VM; sm: SM }) {
               </Grid>
             ))}
             {subplots.length === 0 && (
-              <Grid xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Typography variant="body2" color="text.secondary">
                   No subplots yet.
                 </Typography>
@@ -314,7 +314,7 @@ export function SubplotCard({
       </Stack>
 
       <Grid container spacing={1} mt={0.5}>
-        <Grid xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <TextField
             label="Title"
             value={s.title}
@@ -323,7 +323,7 @@ export function SubplotCard({
             size="small"
           />
         </Grid>
-        <Grid xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Select
             fullWidth
             size="small"
@@ -337,11 +337,11 @@ export function SubplotCard({
             ))}
           </Select>
         </Grid>
-        <Grid xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <ActsToggles value={s.dominantActs} onToggle={toggleAct} />
         </Grid>
 
-        <Grid xs={12}>
+        <Grid size={{ xs: 12 }}>
           <TextField
             label="Purpose"
             value={s.purpose}
@@ -351,14 +351,14 @@ export function SubplotCard({
           />
         </Grid>
 
-        <Grid xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <MultiSelectCharacters
             value={s.charactersInvolved}
             onChange={(ids) => set({ charactersInvolved: ids })}
             characters={characters}
           />
         </Grid>
-        <Grid xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <MultiSelectTPs
             value={s.linkedTurningPoints ?? []}
             onChange={(ids) => set({ linkedTurningPoints: ids })}
@@ -366,7 +366,7 @@ export function SubplotCard({
           />
         </Grid>
 
-        <Grid xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Stack
             direction="row"
             alignItems="center"
@@ -395,7 +395,7 @@ export function SubplotCard({
                 key={idx}
                 sx={{ mb: 1 }}
               >
-                <Grid xs={12} md={1.2}>
+                <Grid size={{ xs: 12, md: 1.2 }}>
                   <TextField
                     label="Order"
                     size="small"
@@ -406,7 +406,7 @@ export function SubplotCard({
                     }
                   />
                 </Grid>
-                <Grid xs={12} md={7}>
+                <Grid size={{ xs: 12, md: 7 }}>
                   <TextField
                     label="Summary"
                     size="small"
@@ -415,7 +415,7 @@ export function SubplotCard({
                     fullWidth
                   />
                 </Grid>
-                <Grid xs={12} md={3.3}>
+                <Grid size={{ xs: 12, md: 3.3 }}>
                   <TextField
                     label="Out change"
                     size="small"
@@ -426,7 +426,7 @@ export function SubplotCard({
                     fullWidth
                   />
                 </Grid>
-                <Grid xs={12} md={0.5}>
+                <Grid size={{ xs: 12, md: 0.5 }}>
                   <IconButton size="small" onClick={() => delBeat(idx)}>
                     <DeleteIcon fontSize="small" />
                   </IconButton>

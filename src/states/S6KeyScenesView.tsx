@@ -10,6 +10,7 @@ import {
   MenuItem,
   Button,
   Chip,
+  Grid,
   IconButton,
   Divider,
   Dialog,
@@ -17,7 +18,6 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -312,7 +312,7 @@ function SceneRow({
   return (
     <Paper variant="outlined" sx={{ p: 1.5 }}>
       <Grid container spacing={1} alignItems="center">
-        <Grid xs={12} md={2.2}>
+        <Grid size={{ xs: 12, md: 2.2 }}>
           <TextField
             size="small"
             label="Title"
@@ -320,7 +320,7 @@ function SceneRow({
             onChange={(e) => set({ title: e.target.value })}
           />
         </Grid>
-        <Grid xs={12} md={1.8}>
+        <Grid size={{ xs: 12, md: 1.8 }}>
           <Select
             size="small"
             fullWidth
@@ -334,7 +334,7 @@ function SceneRow({
             ))}
           </Select>
         </Grid>
-        <Grid xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <TextField
             size="small"
             label="Location"
@@ -343,7 +343,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid xs={12} md={1.5}>
+        <Grid size={{ xs: 12, md: 1.5 }}>
           <Select
             size="small"
             fullWidth
@@ -357,7 +357,7 @@ function SceneRow({
             ))}
           </Select>
         </Grid>
-        <Grid xs={12} md={3.5}>
+        <Grid size={{ xs: 12, md: 3.5 }}>
           <TextField
             size="small"
             label="Synopsis"
@@ -366,7 +366,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid xs={12} md={0.6}>
+        <Grid size={{ xs: 12, md: 0.6 }}>
           <IconButton
             size="small"
             onClick={() => onRemove(scene.id)}
@@ -377,7 +377,7 @@ function SceneRow({
         </Grid>
       </Grid>
       <Grid container spacing={1} mt={0.5}>
-        <Grid xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <TextField
             size="small"
             label="Goal"
@@ -386,7 +386,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <TextField
             size="small"
             label="Conflict"
@@ -395,7 +395,7 @@ function SceneRow({
             fullWidth
           />
         </Grid>
-        <Grid xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <TextField
             size="small"
             label="Outcome"

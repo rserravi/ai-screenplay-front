@@ -8,10 +8,10 @@ import {
   TextField,
   Button,
   Chip,
+  Grid,
   IconButton,
   Divider,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -214,7 +214,7 @@ export function SceneEditor({
         </Stack>
       </Stack>
       <Grid container spacing={1}>
-        <Grid xs={12}>
+        <Grid size={{ xs: 12 }} >
           <TextField
             label="Fountain (formatted text for this scene)"
             value={sc.formatted_text ?? ""}

@@ -7,6 +7,7 @@ import {
   Paper,
   Button,
   Chip,
+  Grid,
   IconButton,
   Divider,
   Dialog,
@@ -17,7 +18,6 @@ import {
   Alert,
   AlertTitle,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { useNotify } from "./useNotify";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -461,7 +461,7 @@ function SceneBlock({
       ) : (
         <Box sx={{ mt: 1 }}>
           <Grid container spacing={1}>
-            <Grid xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 value={draftBuffer}
                 onChange={(e) => onChangeDraft(e.target.value)}
@@ -471,7 +471,7 @@ function SceneBlock({
                 placeholder={text}
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Stack direction="row" spacing={1}>
                 <Button
                   variant="contained"
